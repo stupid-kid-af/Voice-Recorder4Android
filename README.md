@@ -14,7 +14,7 @@ Feel free to ask questions
 ### !!Out Dir = Android/Data/com.ashutosh.voicerecorder
 
 
-Telegram group : Coming....
+Telegram group : Coming Soon..
 
 ### What to add (aka Roadmap)
 
