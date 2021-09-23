@@ -1,8 +1,6 @@
 package com.ashutosh.voicerecorder;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+import static android.os.Environment.DIRECTORY_MUSIC;
 
 import android.Manifest;
 import android.content.ContextWrapper;
@@ -10,31 +8,39 @@ import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-
-    private static int MICROPHONE_PERMISSION_CODE = 200;
+    private static final int MICROPHONE_PERMISSION_CODE = 200;
+    final String TAG = "MainAc";
+    List<String> fileList = new ArrayList<>();
     MediaRecorder mediaRecorder;
     MediaPlayer mediaPlayer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (isMicrophonePresent()){
+        if (isMicrophonePresent()) {
             getMicrophonePermission();
         }
     }
 
     public void btnRecordPressed(View view) {
-
         try {
             mediaRecorder = new MediaRecorder();
             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -95,10 +101,55 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private String getRecordingFilePath(){
+    private String getRecordingFilePath() {
+
+        List<Integer> ints = new ArrayList<>();
+
+        String child = "testRecordingFile";
+//        String output = "0123456789";
+
+        String path = getExternalFilesDir(DIRECTORY_MUSIC).getAbsolutePath();
+        File directory = null;
+
+        try {
+            directory = new File(path);
+        } catch (Exception e) {
+            Log.d(TAG, "btnRecordPressed: " + e);
+        }
+
+        assert directory != null;
+        File[] files = directory.listFiles();
+        Log.i(TAG, "getFileListInFolder:files " + Arrays.toString(files));
+        assert files != null;
+        for (File f : files) {
+            Log.d(TAG, "getFileListInFolder: " + f.getName());
+        }
+        for (File file : files) {
+            fileList.add(file.getName());
+            Log.i(TAG, "FileName:" + file.getName());
+        }
+
+        for (int i = 0; i < fileList.size(); i++) {
+            String input = fileList.get(i);
+            if(input.contains(child)){
+                String x = input.replace(child,"");
+                String y = x.replace(".mp3","");
+                ints.add(Integer.parseInt(y));
+            }
+        }
         ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
-        File Directory = contextWrapper.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
-        File file = new File(Directory, "testRecordingFile" + ".mp3");
+        File Directory = contextWrapper.getExternalFilesDir(DIRECTORY_MUSIC);
+        File file = new File(Directory, child+ (getMax(ints)+1) + ".mp3");
+        Log.d(TAG, "getRecordingFilePath: "+file.getPath()+" "+getMax(ints));
+
         return file.getPath();
+    }
+    public static Integer getMax(List<Integer> list)
+    {
+        if (list == null || list.size() == 0) {
+            return 0;
+        }
+
+        return Collections.max(list);
     }
 }
