@@ -15,6 +15,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,21 +28,50 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int MICROPHONE_PERMISSION_CODE = 200;
     final String TAG = "MainAc";
-    List<String> fileList = new ArrayList<>();
+    List<String> fileList = new ArrayList<>(),fileList2 = new ArrayList<>();
     MediaRecorder mediaRecorder;
     MediaPlayer mediaPlayer;
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        recyclerView = findViewById(R.id.recy);
 
         if (isMicrophonePresent()) {
             getMicrophonePermission();
+            updateRecycler();
         }
+        Log.d(TAG, "onCreate: "+getRecordingFilePath());
+    }
+
+    void updateRecycler(){
+        String path = getExternalFilesDir(DIRECTORY_MUSIC).getAbsolutePath();
+        File directory = null;
+
+        try {
+            directory = new File(path);
+        } catch (Exception e) {
+            Log.d(TAG, "btnRecordPressed: " + e);
+        }
+
+        assert directory != null;
+        File[] files = directory.listFiles();
+        assert files != null;
+        for (File file : files) {
+            fileList2.add(file.getName());
+        }
+
+        Adapter  adapter = new Adapter(fileList2);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(adapter);
     }
 
     public void btnRecordPressed(View view) {
+        Log.d(TAG, "btnRecordPressed: "+getRecordingFilePath());
+        updateRecycler();
         try {
             mediaRecorder = new MediaRecorder();
             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -50,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             mediaRecorder.prepare();
             mediaRecorder.start();
 
-            Toast.makeText(this,"Recording is started", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,"Recording is started", Toast.LENGTH_SHORT).show();
         }
         catch (Exception e){
             e.printStackTrace();
@@ -60,30 +91,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnStopPressed(View view) {
+        updateRecycler();
         mediaRecorder.stop();
         mediaRecorder.release();
         mediaRecorder = null;
 
-        Toast.makeText(this,"Recording is stopped", Toast.LENGTH_LONG).show();
+        Toast.makeText(this,"Recording is stopped", Toast.LENGTH_SHORT).show();
     }
 
     public void btnPlayPressed(View view) {
-
+        updateRecycler();
         try {
             mediaPlayer = new MediaPlayer();
             mediaPlayer.setDataSource(getRecordingFilePath());
             mediaPlayer.prepare();
             mediaPlayer.start();
 
-            Toast.makeText(this,"Recording is playing", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,"Recording is playing", Toast.LENGTH_SHORT).show();
         }
 
         catch (Exception e){
             e.printStackTrace();
         }
-
-
-
 
     }
 
@@ -121,9 +150,6 @@ public class MainActivity extends AppCompatActivity {
         File[] files = directory.listFiles();
         Log.i(TAG, "getFileListInFolder:files " + Arrays.toString(files));
         assert files != null;
-        for (File f : files) {
-            Log.d(TAG, "getFileListInFolder: " + f.getName());
-        }
         for (File file : files) {
             fileList.add(file.getName());
             Log.i(TAG, "FileName:" + file.getName());
