@@ -1,7 +1,7 @@
 //Sep 19 10:57pm IST
 
 # Voice-Recorder---Open-Source
-An open source voice recorder.
+An open source voice recorder for Android.
 
 Feel free to ask questions
 
