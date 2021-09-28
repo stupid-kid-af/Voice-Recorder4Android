@@ -1,4 +1,4 @@
-https://img.shields.io/ore/stars/nucleus
+<img alt="Ore Stars" src="https://img.shields.io/ore/stars/nucleus">
 
 //Sep 19 10:57pm IST
 
