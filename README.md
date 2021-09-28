@@ -1,4 +1,4 @@
-<img alt="Ore Stars" src="https://img.shields.io/ore/stars/nucleus">
+<img alt="Packagist Stars" src="https://img.shields.io/packagist/stars/stupid-kid-af/Voice-Recorder4Android">
 
 //Sep 19 10:57pm IST
 
