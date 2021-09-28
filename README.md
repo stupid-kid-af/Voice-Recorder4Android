@@ -1,4 +1,4 @@
-<img alt="Packagist Stars" src="https://img.shields.io/packagist/stars/stupid-kid-af/Voice-Recorder4Android">
+<img alt="Packagist Stars" src="https://img.shields.io/packagist/stars/stupid-kid-af/Voice-Recorder4Android">         	<img alt="GitHub all releases" src="https://img.shields.io/github/downloads/stupid-kid-af/Voice-Recorder4Android/total">
 
 //Sep 19 10:57pm IST
 
